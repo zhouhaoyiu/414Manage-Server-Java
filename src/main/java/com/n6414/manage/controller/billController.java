@@ -21,14 +21,7 @@ public class billController {
 
     @GetMapping("getAllBills")
     public Object getAll(HttpServletRequest request, HttpServletResponse response) {
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        try {
-            request.setCharacterEncoding("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        response.setContentType("text/html;charset=UTF-8");
-        response.addHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
+
         List<Bill> bill = billMapper.selectBill();
         JSONObject json = new JSONObject();
         json.put("bill", bill);
@@ -38,27 +31,12 @@ public class billController {
     @GetMapping("setBill")
     public Object setBill(HttpServletRequest request, HttpServletResponse response) {
         String event = request.getParameter("event");
-        System.out.println(event);
         Integer amount = new Integer(request.getParameter("amount"));
-        System.out.println(amount);
         Integer amountCode = new Integer(request.getParameter("amountCode"));
-        System.out.println(amountCode);
         String eventDate = request.getParameter("eventDate");
-        System.out.println(eventDate);
         Integer submitterId = new Integer(request.getParameter("submitterId"));
-        System.out.println(submitterId);
         String submitterTrueName = request.getParameter("submitterTrueName");
-        System.out.println(submitterTrueName);
         String submitterUserName = request.getParameter("submitterUserName");
-        System.out.println(submitterUserName);
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        try {
-            request.setCharacterEncoding("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        response.setContentType("text/html;charset=UTF-8");
-        response.addHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
 
         int resultCount = billMapper.saveBill(event, amount, amountCode, eventDate, submitterId, submitterTrueName, submitterUserName);
         JSONObject json = new JSONObject();
@@ -71,5 +49,16 @@ public class billController {
         json.put("message", "success");
         return json;
     }
+    @GetMapping("getBillsByDate")
+    public Object getBillsByDate(HttpServletRequest request, HttpServletResponse response) {
+
+        String eventDate = request.getParameter("eventDate");
+        System.out.println(eventDate);
+        List<Bill> bill = billMapper.selectBillByDate(eventDate);
+        JSONObject json = new JSONObject();
+        json.put("bill", bill);
+        return json;
+    }
+
 }
 

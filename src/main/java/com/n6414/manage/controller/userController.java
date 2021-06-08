@@ -26,14 +26,7 @@ public class userController {
 
     @GetMapping("getAllUsers")
     public Object getAllUsers(HttpServletRequest request, HttpServletResponse response) {
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        try {
-            request.setCharacterEncoding("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        response.setContentType("text/html;charset=UTF-8");
-        response.addHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
+
         List<User> user = userMapper.selectAllUsers();
         JSONObject json = new JSONObject();
         System.out.println(user);
@@ -45,14 +38,7 @@ public class userController {
 
     @GetMapping("login")
     public Object login(HttpServletRequest request, HttpServletResponse response) {
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        try {
-            request.setCharacterEncoding("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        response.setContentType("text/html;charset=UTF-8");
-        response.addHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
+
         String userName = request.getParameter("userName");
         String passWord = request.getParameter("passWord");
         User user = userMapper.selectUser(userName);
@@ -77,13 +63,41 @@ public class userController {
         return json;
     }
 
-    @GetMapping("register")
-    public String register(String userName, String passWord) {
-        int resultCount = userMapper.saveUser(userName, passWord);
-        if (resultCount == 0) {
-            return "注册失败";
+    @GetMapping("searchUser")
+    public Object searchUser(HttpServletRequest request, HttpServletResponse response) {
+        String trueName = request.getParameter("trueName");
+        String userName = request.getParameter("userName");
+        List resultCount = userMapper.searchUser(trueName, userName);
+        System.out.println(resultCount);
+        JSONObject json = new JSONObject();
+        if (resultCount.isEmpty()) {
+            json.put("code", "1000");
+            json.put("message", "success");
+            return json;
+        } else {
+            json.put("code", "1001");
+            json.put("message", "faild");
+            return json;
         }
-        return "注册成功";
+    }
+
+    @GetMapping("register")
+    public Object register(HttpServletRequest request, HttpServletResponse response) {
+        String trueName = request.getParameter("trueName");
+        String nickName = request.getParameter("nickName");
+        String address = request.getParameter("address");
+        String userName = request.getParameter("userName");
+        String passWord = request.getParameter("passWord");
+        int resultCount = userMapper.saveUser(trueName, nickName, address, userName, passWord);
+        JSONObject json = new JSONObject();
+        if (resultCount == 0) {
+            json.put("code", "1001");
+            json.put("message", "注册失败");
+            return json;
+        }
+        json.put("code", "1000");
+        json.put("message", "注册成功");
+        return json;
     }
 
 }
